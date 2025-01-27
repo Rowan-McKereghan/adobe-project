@@ -1,18 +1,22 @@
 package adobe_project;
 
-// import com.sun.net.httpserver.HttpServer;
-// import com.sun.net.httpserver.HttpHandler;
-// import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 
-// import java.io.IOException;
-// import java.io.OutputStream;
-// import java.net.InetSocketAddress;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 
 
 class RomanNumeralHTTPServer {
 
+    public static void createAndStartServer() throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        server.createContext("/romannumeral", new RomanHandler());
 
-    
+        server.start();
+
+    }
+
+
 
 
     public static String convertToRoman(int userInput) {
