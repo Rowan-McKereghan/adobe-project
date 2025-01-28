@@ -8,6 +8,9 @@ import java.net.InetSocketAddress;
 
 class RomanNumeralHTTPServer {
 
+
+    //TODO: 404 handler.
+    //TODO: integration tests for this func
     public static void createAndStartServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/romannumeral", new RomanHandler());
@@ -19,9 +22,9 @@ class RomanNumeralHTTPServer {
 
 
 
-    public static String convertToRoman(int userInput) {
+    public static String convertToRoman(int userInput) throws NumberFormatException {
         if(userInput < 1 || userInput > 3999) {
-            return "Please enter an integer in the interval [1, 3999].";
+            throw new NumberFormatException();
         }
 
         //store each digit value of user input

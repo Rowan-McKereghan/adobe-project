@@ -1,5 +1,6 @@
 package adobe_project;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -39,9 +40,9 @@ public class RomanNumeralHTTPServerTest {
 
     @Test
     public void userInputOutsideIntervalTests() {
-        assertEquals(RomanNumeralHTTPServer.convertToRoman(4000), "Please enter an integer in the interval [1, 3999].");
-        assertEquals(RomanNumeralHTTPServer.convertToRoman(0), "Please enter an integer in the interval [1, 3999].");
-        assertEquals(RomanNumeralHTTPServer.convertToRoman(-1), "Please enter an integer in the interval [1, 3999].");
+        assertThrows(NumberFormatException.class, () -> RomanNumeralHTTPServer.convertToRoman(4000));
+        assertThrows(NumberFormatException.class, () -> RomanNumeralHTTPServer.convertToRoman(0));
+        assertThrows(NumberFormatException.class, () -> RomanNumeralHTTPServer.convertToRoman(-1));
     }
 
 
