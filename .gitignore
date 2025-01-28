@@ -1,2 +1,5 @@
 .vscode
 .DS_Store
+http-server/int-to-roman/dependency-reduced-pom.xml
+http-server/int-to-roman/target
+http-server/int-to-roman/.mvn

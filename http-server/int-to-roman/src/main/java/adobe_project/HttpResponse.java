@@ -6,10 +6,12 @@ class HttpResponse {
 
     private int responseCode;
     private String responseBody;
+    private String contentType;
 
-    public HttpResponse(int code, String response) {
+    public HttpResponse(int code, String response, String type) {
         responseCode = code;
         responseBody = response;
+        contentType = type;
     }
 
     public int getCode() {
@@ -20,6 +22,10 @@ class HttpResponse {
         return responseBody;
     }
 
+    public String getType() {
+        return contentType;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj == null)
@@ -27,16 +33,18 @@ class HttpResponse {
         if(obj.getClass() != this.getClass())
             return false;
         final HttpResponse o = (HttpResponse) obj;
-        if(this.responseBody == null && o.getResponse() == null)
+        if((this.responseBody == null && o.getResponse() == null) && (this.contentType == null && o.getType() == null))
             return true;
-        if(!this.responseBody.equals(o.getResponse()) || this.responseCode != o.getCode())
+        if(this.responseBody == null || this.contentType == null || o.getResponse() == null || o.getType() == null)
+            return false;
+        if(!this.responseBody.equals(o.getResponse()) || this.responseCode != o.getCode() || !this.contentType.equals(o.getType()))
             return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.responseBody, this.responseCode);
+        return Objects.hash(this.responseBody, this.responseCode, this.contentType);
     }
 
 }
