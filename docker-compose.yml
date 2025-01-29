@@ -1,0 +1,15 @@
+
+services:
+  backend:
+    build: ./http-server
+    ports: 
+      - "8080:8080"
+    container_name: int-to-roman-backend
+    networks:
+      - adobe-project-network
+
+networks:
+  adobe-project-network:
+    driver: bridge
+    
+
