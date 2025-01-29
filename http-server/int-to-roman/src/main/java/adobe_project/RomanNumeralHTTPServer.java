@@ -9,13 +9,11 @@ import java.net.InetSocketAddress;
 class RomanNumeralHTTPServer {
 
 
-    //TODO: 404 handler.
     //TODO: integration tests for this func
-    public static void createAndStartServer() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+    public static HttpServer createServer(int port) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/romannumeral", new RomanHandler());
-
-        server.start();
+        return server;
 
     }
 
