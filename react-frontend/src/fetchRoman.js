@@ -12,7 +12,7 @@ async function fetchRoman(userInput) {
             return await response.text();
     }
     catch (error) {
-        return "Woah Big Error!";
+        return "Server Error: " + error;
     }
 
 }
