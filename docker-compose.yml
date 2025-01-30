@@ -7,6 +7,17 @@ services:
     container_name: int-to-roman-backend
     networks:
       - adobe-project-network
+  frontend:
+    build: ./react-frontend
+    ports:
+      - "3000:3000"
+    container_name: int-to-roman-frontend
+    networks:
+      - adobe-project-network
+    depends_on:
+      - backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
 networks:
   adobe-project-network:

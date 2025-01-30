@@ -52,6 +52,7 @@ class RomanHandler implements HttpHandler {
 
             exchange.getResponseHeaders().set("Content-Type", httpRes.getType());
             exchange.getResponseHeaders().set("Charset", "UTF-8");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             exchange.sendResponseHeaders(httpRes.getCode(), httpRes.getResponse().getBytes(UTF_8).length);
             
             OutputStream os = exchange.getResponseBody();

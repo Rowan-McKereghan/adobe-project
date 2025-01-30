@@ -2,6 +2,7 @@ package adobe_project;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.AfterAll;
 import com.sun.net.httpserver.HttpServer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.json.JSONObject;
+
 
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -158,10 +162,10 @@ public class IntegrationTests {
             "http://localhost:" + String.valueOf(port) + "/romannumeral?query=40",
             "http://localhost:" + String.valueOf(port) + "/romannumeral?query=3999"};
 
-        String[] jsons = new String[]{
-            "{\"output\":\"I\",\"input\":\"1\"}",
-            "{\"output\":\"XL\",\"input\":\"40\"}",
-            "{\"output\":\"MMMCMXCIX\",\"input\":\"3999\"}"
+        JSONObject[] jsons = new JSONObject[]{
+            new JSONObject("{\"output\":\"I\",\"input\":\"1\"}"),
+            new JSONObject("{\"output\":\"XL\",\"input\":\"40\"}"),
+            new JSONObject("{\"output\":\"MMMCMXCIX\",\"input\":\"3999\"}")
         };
         for(int i = 0; i < urls.length; i++) {
             try {
@@ -177,7 +181,12 @@ public class IntegrationTests {
                     fullResponse += responseString;
                 }
                 in.close();
-                assertEquals(fullResponse, jsons[i]);
+                JSONObject testJSON = new JSONObject(fullResponse);
+                assertTrue(testJSON.has("output"));
+                assertTrue(testJSON.has("input"));
+                assertEquals(testJSON.getString("output"), jsons[i].getString("output"));
+                assertEquals(testJSON.getString("input"), jsons[i].getString("input"));
+
             }
             catch (IOException e) {
                 System.out.println("Malformed Query Test for URL " + urls[i] + 
