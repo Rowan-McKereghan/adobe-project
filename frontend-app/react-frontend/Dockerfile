@@ -6,7 +6,7 @@ COPY vite.config.js ./
 RUN npm install
 COPY src ./src
 COPY public ./public
-RUN npm run build
+RUN npm run full-build
 
 FROM node:23-alpine3.20
 WORKDIR /react-frontend-build

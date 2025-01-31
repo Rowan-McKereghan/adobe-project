@@ -1,4 +1,3 @@
-
 async function fetchRoman(userInput) {
     const url = "http://localhost:8080/romannumeral?query="
     try {

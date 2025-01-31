@@ -1,6 +1,6 @@
 import './App.css';
 import fetchRoman from './fetchRoman'
-import {Button, defaultTheme, Provider, Flex, Header, TextField, Content, Switch} from '@adobe/react-spectrum';
+import {Button, defaultTheme, Provider, Flex, Heading, TextField, Text, Switch} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 
 function App() {
@@ -29,14 +29,17 @@ function App() {
     (
       <Provider theme={defaultTheme} id="prov" colorScheme={darkMode}>
         <Flex direction="column" height='100vh' width="100vw" minHeight='30vh' minWidth="20vw"> 
-          <Switch alignSelf='end' onChange={switchColorScheme}>{switchText}</Switch>
-          <Flex direction='column' height='80vh' width="20vw" marginStart='43vw' marginEnd='37vw' marginY='10vh' gap="size-400" alignItems="flex-start" justifyContent="left">
-            <Header>Integer to Roman Numeral Converter</Header>
-            <TextField label="Input" value={inputInt} onChange={setInputInt}></TextField>
-            <Button variant="accent" data-testid='button' onPress={() => handleSubmit()}>
+          <Switch alignSelf='end' data-testid="switch" onChange={switchColorScheme}>{switchText}</Switch>
+          <Heading level="2" marginTop="5vh">Integer to Roman Numeral Converter</Heading>
+          <Flex direction='column' height='80vh' width="50vw" marginStart='25vw' marginEnd='35vw' marginBottom='10vh' gap="size-400" alignItems="center" justifyContent="left">
+            <TextField style={{"text-align": "center"}} label="Enter your number here:" data-testid="input" value={inputInt} onChange={setInputInt}></TextField>
+            <Button variant="secondary" height="size-500" data-testid="fetch-button" onPress={() => handleSubmit()}>
                     Convert To Roman Numeral
             </Button>
-            <Content>Roman Numeral: {romanNumeral}</Content>
+            <Flex direction="row" justifyContent="flex-start" width="30vw" marginStart="15vw" wrap>
+              <Heading level="4">Roman Numeral:&nbsp;</Heading>
+              <Text data-testid="output" alignSelf="center">{romanNumeral}</Text>
+            </Flex>
           </Flex>
         </Flex>
       </Provider>
