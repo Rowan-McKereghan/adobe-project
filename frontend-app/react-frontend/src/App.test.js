@@ -7,7 +7,7 @@ import fetchRoman from './fetchRoman';
 
 //user event test fetch
 //type in number then make sure text state updates
-//click button and ensure fetch is executed by checking roman numeral text
+//click button and ensure fetch is mocked by checking roman numeral text
 
 jest.mock('./fetchRoman', () => jest.fn());
 

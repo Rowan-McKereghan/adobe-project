@@ -7,6 +7,14 @@ import org.junit.jupiter.api.Test;
 
 import org.json.JSONObject;
 
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.apache.logging.log4j.Logger;
+
+
+//import mockito, ensure logger logs do nothing.
+@ExtendWith(MockitoExtension.class)
 public class RomanHandlerTest {
 
     //for testing buffer overflow avoidance
@@ -27,9 +35,13 @@ public class RomanHandlerTest {
     zZnMnsydzZTNh82dzYVhzY/Nk82UzLnMvMyjbMy0zZTMsMykzJ/NlOG4vcyrLs2VzZnMnsydzZTNh82dzYVhzY/Nk82UzLnMvMyjbMy0zZTMsMykzJ/NlOG4vcyrLs2V
     """;
 
+    @Mock
+    Logger mockLogger;
+
+
     @Test
     public void noQueryTest() {
-        RomanHandler test = new RomanHandler();
+        RomanHandler test = new RomanHandler(mockLogger);
         HttpResponse httpTest = new HttpResponse(400, "No query.", "text/plain");
         assertEquals(test.parseQueryStringAndReturnResponseString(null), httpTest);
         assertEquals(test.parseQueryStringAndReturnResponseString(""), httpTest);
@@ -37,7 +49,7 @@ public class RomanHandlerTest {
 
     @Test
     public void invalidQueryTests() {
-        RomanHandler test = new RomanHandler();
+        RomanHandler test = new RomanHandler(mockLogger);
         HttpResponse httpTest = new HttpResponse(400, "Invalid queries.", "text/plain");
         String[] queries = new String[]{"query", "query=", "blahblah", "notquery=400", superLongString + "=400", "query=" + superLongString};
         for(String query : queries) {
@@ -47,7 +59,7 @@ public class RomanHandlerTest {
 
     @Test
     public void invalidQueryValuesTests() {
-        RomanHandler test = new RomanHandler();
+        RomanHandler test = new RomanHandler(mockLogger);
         HttpResponse httpTest = new HttpResponse(400, "Please enter an integer in the interval [1, 3999].", "text/plain");
         String[] queries = new String[]{"query=abc", "query=400a", "query=4000", "query=0", "query=-1"};
         for(String query : queries) {
@@ -59,7 +71,7 @@ public class RomanHandlerTest {
     public void validQueryTests() {
         String[] inputs = new String[]{"2756", "1074", "54"};
         String[] outputs = new String[]{"MMDCCLVI", "MLXXIV", "LIV"};
-        RomanHandler test = new RomanHandler();
+        RomanHandler test = new RomanHandler(mockLogger);
         JSONObject testJSON = new JSONObject();
         for(int i = 0; i < inputs.length; i++) {
             testJSON.put("output", outputs[i]);

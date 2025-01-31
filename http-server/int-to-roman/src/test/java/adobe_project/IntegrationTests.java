@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,30 +17,45 @@ import java.lang.Thread;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.sun.net.httpserver.HttpServer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 
-
+@ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class IntegrationTests {
+
     private HttpServer s;
     private int port = 8000;
 
+    @Mock
+    Logger mockLogger;
+
+    private static final Logger logger = LogManager.getLogger(IntegrationTests.class);
+
+
     @BeforeAll
     public void startServer() {
+        MockitoAnnotations.openMocks(this);
+        when(mockLogger.isInfoEnabled()).thenReturn(true);
+        when(mockLogger.isErrorEnabled()).thenReturn(true);
+        when(mockLogger.isFatalEnabled()).thenReturn(true);
         try {
-            s = RomanNumeralHTTPServer.createServer(port);
+            s = RomanNumeralHTTPServer.createServer(port, mockLogger);
             s.start();
         }
         catch (IOException e) {
-            System.out.println("Test Server Failed To Start, IO Exception: " + (e.getMessage() == null ? "Null Message" : e.getMessage()));
+            logger.fatal("Test Server Failed To Start, IO Exception: " + (e.getMessage() == null ? "Null Message" : e.getMessage()));
         }
 
         //give time for server to start before pinging it with tests
@@ -81,7 +100,7 @@ public class IntegrationTests {
                 assertEquals(fullResponse, "No query.");
             }
             catch (IOException e) {
-                System.out.println("No Query Test for URL " + url_str + 
+                logger.fatal("No Query Test for URL " + url_str + 
                     " Failed, IOException: " + (e.getMessage() == null ? "Null Message" : e.getMessage()));
                 fail();
             }
@@ -115,7 +134,7 @@ public class IntegrationTests {
                 assertEquals(fullResponse, "Invalid queries.");
             }
             catch (IOException e) {
-                System.out.println("Invalid Query Test for URL " + url_str + 
+                logger.fatal("Invalid Query Test for URL " + url_str + 
                     " Failed, IOException: " + (e.getMessage() == null ? "Null Message" : e.getMessage()));
                 fail();
             }
@@ -148,7 +167,7 @@ public class IntegrationTests {
                 assertEquals(fullResponse, "Please enter an integer in the interval [1, 3999].");
             }
             catch (IOException e) {
-                System.out.println("Malformed Query Test for URL " + url_str + 
+                logger.fatal("Malformed Query Test for URL " + url_str + 
                 " Failed, IOException: " + (e.getMessage() == null ? "Null Message" : e.getMessage()));         
                 fail();   
             }
@@ -189,7 +208,7 @@ public class IntegrationTests {
 
             }
             catch (IOException e) {
-                System.out.println("Malformed Query Test for URL " + urls[i] + 
+                logger.fatal("JSON 200 Query Test for URL " + urls[i] + 
                 " Failed, IOException: " + (e.getMessage() == null ? "Null Message" : e.getMessage()));         
                 fail();   
             }

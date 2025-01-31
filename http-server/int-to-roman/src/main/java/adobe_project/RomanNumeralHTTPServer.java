@@ -5,14 +5,15 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import org.apache.logging.log4j.Logger;
+
 
 class RomanNumeralHTTPServer {
 
 
-    //TODO: integration tests for this func
-    public static HttpServer createServer(int port) throws IOException {
+    public static HttpServer createServer(int port, Logger logger) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/romannumeral", new RomanHandler());
+        server.createContext("/romannumeral", new RomanHandler(logger));
         return server;
 
     }
