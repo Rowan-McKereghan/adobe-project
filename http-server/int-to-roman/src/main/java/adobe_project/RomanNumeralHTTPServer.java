@@ -6,14 +6,18 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.apache.logging.log4j.Logger;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 
 
 class RomanNumeralHTTPServer {
 
-
-    public static HttpServer createServer(int port, Logger logger) throws IOException {
+    public static HttpServer createServer(int port, Logger logger, Counter requestCounter, PrometheusMeterRegistry registry) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/romannumeral", new RomanHandler(logger));
+        logger.info("Creating Roman Handler");
+        server.createContext("/romannumeral", new RomanHandler(logger, requestCounter));
+        logger.info("Creating Metrics Handler");
+        server.createContext("/metrics", new MetricsHandler(logger, registry));
         return server;
 
     }

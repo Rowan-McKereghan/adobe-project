@@ -11,15 +11,18 @@ import java.nio.charset.StandardCharsets;
 import org.json.JSONObject;
 
 import org.apache.logging.log4j.Logger;
+import io.micrometer.core.instrument.Counter;
 
 
 class RomanHandler implements HttpHandler {
 
     private final Logger logger;
+    private Counter reqCounter;
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    public RomanHandler(Logger mainLogger) {
+    public RomanHandler(Logger mainLogger, Counter requestCounter) {
         this.logger = mainLogger;
+        this.reqCounter = requestCounter;
     }
 
     public HttpResponse parseQueryStringAndReturnResponseString(String query) {
@@ -60,6 +63,7 @@ class RomanHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) {
+        reqCounter.increment();
         HttpResponse httpRes = parseQueryStringAndReturnResponseString(exchange.getRequestURI().getQuery());
 
         exchange.getResponseHeaders().set("Content-Type", httpRes.getType());

@@ -30,6 +30,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
+
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -40,6 +43,12 @@ public class IntegrationTests {
 
     @Mock
     Logger mockLogger;
+    @Mock
+    PrometheusMeterRegistry mockRegistry;
+    @Mock
+    Counter mockCounter;
+
+    
 
     private static final Logger logger = LogManager.getLogger(IntegrationTests.class);
 
@@ -50,8 +59,9 @@ public class IntegrationTests {
         when(mockLogger.isInfoEnabled()).thenReturn(true);
         when(mockLogger.isErrorEnabled()).thenReturn(true);
         when(mockLogger.isFatalEnabled()).thenReturn(true);
+        when(mockRegistry.scrape()).thenReturn("someRegData");
         try {
-            s = RomanNumeralHTTPServer.createServer(port, mockLogger);
+            s = RomanNumeralHTTPServer.createServer(port, mockLogger, mockCounter, mockRegistry);
             s.start();
         }
         catch (IOException e) {
