@@ -33,7 +33,11 @@
 
 This is a basic HTTP server written in Java with a React frontend interface that converts integers to Roman numerals when queried. 
 
-Once running, users can request data from it with commands such as ```curl "http://localhost:8080/romannumeral?query={integer}"```, where ```{integer}``` is some number in the range `[1, 3999]`. Roman numerals with values of 4000 and above have different notations than just letters. [See specification for Roman numerals here.](https://www.britannica.com/topic/Roman-numeral)
+Once running, users can request data from it with commands such as:
+```sh
+curl "http://localhost:8080/romannumeral?query={integer}"
+```
+where `{integer}` is some number in the range `[1, 3999]`. Roman numerals with values of 4000 and above have different notations than just letters. [See specification for Roman numerals here.](https://www.britannica.com/topic/Roman-numeral)
 
 If the request URL is formatted correctly, the server will respond with a JSON object with two values, `"input"` and `"output"`. For example, executing ```curl "http://localhost:8080/romannumeral?query=3"``` would have the server respond with this JSON object:
 ```json
@@ -53,7 +57,11 @@ Entering an integer between (and including) 1 and 3999 in the text field and cli
 
 ### DevOps Capabilities
 
-The server also has basic DevOps capabilities in order to monitor server health, log and debug potential issues, and keep track of basic metrics. Inside the Docker container, users will be able to find a file titled `application-{yyyymmdd}.log`, where `{yyyymmdd}` is today. This log file will have records of what the server is doing on a moment-to-moment basis – writing HTTP requests, serving 400, fatal IO errors, etc. You can access this file by entering the compose stack and executing commands into the `int-to-roman-backend` Docker image directly through Docker Desktop, or by using the command `docker exec -it int-to-roman-backend sh -c "{your command here}"`, where the shell command could be something like `cat application-{yyyymmddd}.log`. 
+The server also has basic DevOps capabilities in order to monitor server health, log and debug potential issues, and keep track of basic metrics. Inside the Docker container, users will be able to find a file titled `application-{yyyymmdd}.log`, where `{yyyymmdd}` is today. This log file will have records of what the server is doing on a moment-to-moment basis – writing HTTP requests, serving 400, fatal IO errors, etc. You can access this file by entering the compose stack and executing commands into the `int-to-roman-backend` Docker image directly through Docker Desktop, or by using the command:
+```sh
+docker exec -it int-to-roman-backend sh -c "{your command here}"
+```
+where the shell command could be something like `cat application-{yyyymmddd}.log`. 
 
 For metrics and monitoring, the server is using Prometheus to scrape metrics data and Grafana to monitor and visualize that data. If users wish, they can query Prometheus directly at [`http://localhost:9090`](). 
 
