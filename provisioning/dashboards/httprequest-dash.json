@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -136,7 +136,7 @@
           "useBackend": false
         }
       ],
-      "title": "HTTP Requests Over Time",
+      "title": "Total HTTP Requests Over Time",
       "type": "timeseries"
     },
     {
@@ -225,7 +225,7 @@
           "useBackend": false
         }
       ],
-      "title": "HTTP Requests Table",
+      "title": "Total HTTP Requests Table",
       "type": "table"
     }
   ],
@@ -242,7 +242,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "HTTP Requests Dashboard",
-  "version": 6,
+  "title": "Total HTTP Requests Dashboard",
+  "uid": "debq8pqjctmo0c",
+  "version": 2,
   "weekStart": ""
 }
