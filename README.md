@@ -151,24 +151,21 @@ The source code for this project is organized thusly:
 │       ├── mvnw                        # Generates build files for MacOS and Linux
 │       ├── mvnw.cmd                    # Generates build files for Windows
 │       ├── pom.xml                     # Manages Maven dependencies and plugins
-│       └── src                         # HTTP Server source code
-│           ├── main
-│           │   ├── java
-│           │   │   └── adobe_project                # main maven package and source code
-│           │   │       ├── HttpResponse.java               # Basic lightweight HTTP response class
-│           │   │       ├── Main.java                       # Main method here, starts server and devops dependencies
-│           │   │       ├── MetricsHandler.java             # Serves scraped metrics data to "/metrics"
-│           │   │       ├── RomanHandler.java               # Handles integer conversion requests, serves JSONs or 400.
-│           │   │       └── RomanNumeralHTTPServer.java     # Integer conversion logic and server port binding
-│           │   └── resources
-│           │       └── log4j2.xml                          # Logger Config File
-│           └── test
-│               └── java
-│                   └── adobe_project                # maven testing package
-│                       ├── HttpResponseTest.java           # Basic .equals() tests
-│                       ├── IntegrationTests.java           # Pings server and tests with expected responses
-│                       ├── RomanHandlerTest.java           # Tests if correct HTTP Response is served
-│                       └── RomanNumeralHTTPServerTest.java # Tests integer conversion logic
+│       ├── .mvn/wrapper                # Maven Wrapper files
+│       └── src                         # HTTP Server source code, main Maven package
+│           ├── main/java/adobe_project 
+│           │   ├── HttpResponse.java               # Basic lightweight HTTP response class
+│           │   ├── Main.java                       # Main method here, starts server and devops dependencies
+│           │   ├── MetricsHandler.java             # Serves scraped metrics data to "/metrics"
+│           │   ├── RomanHandler.java               # Handles integer conversion requests, serves JSONs or 400.
+│           │   └── RomanNumeralHTTPServer.java     # Integer conversion logic and server port binding
+│           └── main/resources
+│           │       └── log4j2.xml                  # Logger Config File
+│           └── test/java/adobe_project               # maven testing package
+│               ├── HttpResponseTest.java           # Basic .equals() tests
+│               ├── IntegrationTests.java           # Pings server and tests with expected responses
+│               ├── RomanHandlerTest.java           # Tests if correct HTTP Response is served
+│               └── RomanNumeralHTTPServerTest.java # Tests integer conversion logic
 │
 ├── react-frontend             # React app dir
 │   ├── Dockerfile                  # Creates frontend image
