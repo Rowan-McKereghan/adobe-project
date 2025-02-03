@@ -1,6 +1,7 @@
 
 services:
   backend:
+    image: ghcr.io/rowan-mckereghan/int-to-roman-backend:latest
     build: ./http-server
     ports: 
       - "8080:8080"
@@ -8,6 +9,7 @@ services:
     networks:
       - adobe-project-network
   frontend:
+    image: ghcr.io/rowan-mckereghan/int-to-roman-frontend:latest
     build: ./react-frontend
     ports:
       - "3000:3000"
