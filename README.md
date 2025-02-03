@@ -77,16 +77,25 @@ See example of default dashboard here when server was stopped, then down, then r
 
 ## Getting Started and Building the Project
 
-<b>1. Once the repo is cloned and Docker is running, open the main directory and simply run: </b>
+<b>Once the repo is cloned and Docker is running, open the main directory and simply run: </b>
 ```sh
 docker compose up --build
 ```
 in order to start the server. You can interrupt the process on the command line or hit stop in Docker Desktop to stop the composed
-containers from running. To restart the containers without rebuilding, remove the `--build` tag from your command.
+containers from running. 
+
+<b>Users who are using `arm64` architecture or have a newer version of Docker can build the images from the published packages instead of the source code by running: </b>
+```sh
+docker compose up
+```
+This is recommended if you are running your Docker images on `arm64` architecture, since it eliminates some build time. If you have a new enough version of Docker, you can use this command and emulate `arm64` containers on `amd64` architecture, trading build time for a minor performance hit.
+
+To continue executing commands from your CLI instead of viewing Docker logs, add the `-d` tag to your command.
+
 If you wish to run the server locally without using and/or installing Docker, see below.
 
 
-<b>2. To remove the Docker containers, run: </b>
+<b>To remove the Docker containers, run: </b>
 ```sh
 docker compose down
 ```
@@ -109,7 +118,83 @@ Both the server and its frontend interface should now be running locally, on you
 
 ## Packaging Layout
 
-graph of packaging, explanations of file locations
+This server is packaged into four main containers:
+
+1. Java HTTP Server (Backend)
+  * [This container is published through GitHub Packages](https://github.com/Rowan-McKereghan/adobe-project/pkgs/container/int-to-roman-backend) in an `arm64` image.
+  * It's constructed using official Docker images for [OpenJDK Alpine](https://hub.docker.com/_/amazoncorretto) and [Maven Alpine](https://hub.docker.com/_/maven), since they're lightweight and cross-platform.
+  * It runs on `http://localhost:8080`, with `/romannumeral` serving the integer conversion functionality, and `/metrics` allowing for Prometheus to scrape metrics data.
+ 
+2. React App (Frontend)
+  * [This container is published through GitHub Packages](https://github.com/Rowan-McKereghan/adobe-project/pkgs/container/int-to-roman-frontend) in an `arm64` image.
+  * It's constructed using the official Docker image for [Node Alpine](https://hub.docker.com/_/node), since it's lightweight and cross-platform.
+  * It runs on `http://localhost:3000` and sends HTTP requests to the Java backend, and updates its state when it receives JSON data accordingly.
+
+3. Prometheus
+  * This container is constructed using the official Docker image for [Prometheus.](https://hub.docker.com/r/prom/prometheus)
+  * It runs on `http://localhost:9090` and queries the Java backend to scrape metrics.
+
+4. Grafana
+  * This container is constructed using the official Docker image for [Grafana.](https://hub.docker.com/r/grafana/grafana)
+  * It hosts dashboards on `http://localhost:3001/dashboards` and visualizes the metrics scraped by Prometheus.
+
+### Code Organization
+
+The source code for this project is organized thusly:
+```
+.
+├── README.md
+├── docker-compose.yml           # Automates building/pulling and running images and containers
+├── http-server                  # Java HTTP Server dir
+│   ├── Dockerfile                  # Creates backend image
+│   └── int-to-roman                # Maven project dir               
+│       ├── mvnw                        # Generates build files for MacOS and Linux
+│       ├── mvnw.cmd                    # Generates build files for Windows
+│       ├── pom.xml                     # Manages Maven dependencies and plugins
+│       └── src                         # HTTP Server source code
+│           ├── main
+│           │   ├── java
+│           │   │   └── adobe_project                # main maven package and source code
+│           │   │       ├── HttpResponse.java               # Basic lightweight HTTP response class
+│           │   │       ├── Main.java                       # Main method here, starts server and devops dependencies
+│           │   │       ├── MetricsHandler.java             # Serves scraped metrics data to "/metrics"
+│           │   │       ├── RomanHandler.java               # Handles integer conversion requests, serves JSONs or 400.
+│           │   │       └── RomanNumeralHTTPServer.java     # Integer conversion logic and server port binding
+│           │   └── resources
+│           │       └── log4j2.xml                          # Logger Config File
+│           └── test
+│               └── java
+│                   └── adobe_project                # maven testing package
+│                       ├── HttpResponseTest.java           # Basic .equals() tests
+│                       ├── IntegrationTests.java           # Pings server and tests with expected responses
+│                       ├── RomanHandlerTest.java           # Tests if correct HTTP Response is served
+│                       └── RomanNumeralHTTPServerTest.java # Tests integer conversion logic
+│
+├── react-frontend             # React app dir
+│   ├── Dockerfile                  # Creates frontend image
+│   ├── index.html                  # Skeleton HTML file (required by Vite)
+│   ├── package-lock.json           # Manages all node dependencies
+│   ├── package.json                # Manages and sets up dependencies and builds for production
+│   ├── public                      
+│   │   └── roman-numerals.png             # icon for browser tab
+│   ├── src                         # React app source code
+│   │   ├── App.css                        # Styling for React App
+│   │   ├── App.jsx                        # Renders react app and updates state
+│   │   ├── App.test.js                    # Tests that App state is updated
+│   │   ├── fetchRoman.jsx                 # Fetches JSON data from backend
+│   │   ├── index.css                      # styles html file
+│   │   ├── main.jsx                       # Main function
+│   │   └── ...                            
+│   └── ...                         # Other default config files
+├── prometheus.yml
+├── provisioning            # grafana config files
+│   ├── dashboards                # JSONs and config files for setting up default dashboards
+│   │   └── ...
+│   └── datasources               # config files for connecting to Prometheus
+│       └── ...                   
+└── readme-images
+    └── ...
+```
 
 ## Engineering and Testing Methodology
 
