@@ -230,7 +230,7 @@ I designed the React app using the Adobe React Spectrum component library for a 
 
 The app consists of a just a few major elements: a text input field, a button, a light and dark mode switch, and a text element that updates with a Roman numeral when the user clicks the button after inputting an integer. The `fetch()` works by having an event listener tied to the button's `onPress` event, which then formats a URL with the user's input and pings the HTTP server backend. The resulting JSON object (or error message, if the user inputted their number incorrectly) is then parsed and its data displayed on the page.
 
-I tested updating the app's state using the Jest framework in `App.test.js`, because it allowed me to mock fetch requests and check the update state logic without actually requesting data from the backend. Jest also allows asynchronous checks on the app's state when combined with the React testing library's `userState` and `render` imports. Overall, I used it because it makes implementing frontend components a lot more reliable. 
+I tested updating the app's state using the Jest framework in `App.test.js`, because it allowed me to mock fetch requests and check the update state logic without actually requesting data from the backend. Jest also allows asynchronous checks on the app's state when combined with the React testing library's `userState` and `render` imports. Overall, I used it because it makes implementing frontend components a lot more reliable. I also manually tested the app by accessing it and using it from other machines on my network.
 
 ### Containerization and DevOps
 
