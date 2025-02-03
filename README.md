@@ -125,6 +125,8 @@ You can alternatively build and run the server locally, which will require you t
 
 Both the server and its frontend interface should now be running locally, on your machine.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Packaging Layout
 
 This server is packaged into four main containers:
@@ -202,6 +204,7 @@ The source code for this project is organized thusly:
 └─ readme-images
     └─ ...
 ```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Engineering and Testing Methodologies
 
@@ -246,6 +249,8 @@ What are some potential next steps for this project?
   1. The server could be deployed to the cloud and updated and maintained using CI/CD. I've already uploaded some Docker images using GitHub Packages, so using GitHub Actions and Jenkins to deploy them would be relatively simple if there was a server to host them on. 
   2. Since I kept the handlers modular, and used dependency injection to separate the server logic and DevOps capabilities, adding more functionalities to both would be relatively simple. Implementing a Roman numeral to integer converter would be quick, and then a service keeping track of the ratio between requests to both handlers using additional Prometheus objects and Grafana dashboards could be added. This would not affect any of the current server functionalities either.
   3. I could implement a custom UI to handle integers above 3999. According to the [Roman numeral specification](https://en.wikipedia.org/wiki/Roman_numerals), digits in the thousands and hundreds of thousands were notated by using lines above and boxes around those digits, respectively. This would allow users to enter a far greater range of positive integers, and would pose an interesting logic and design challenge. 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Built With
 
