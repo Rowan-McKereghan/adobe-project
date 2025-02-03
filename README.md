@@ -143,54 +143,54 @@ This server is packaged into four main containers:
 The source code for this project is organized thusly:
 ```
 .
-├── README.md
-├── docker-compose.yml           # Automates building/pulling and running images and containers
-├── http-server                  # Java HTTP Server dir
-│   ├── Dockerfile                  # Creates backend image
-│   └── int-to-roman                # Maven project dir               
-│       ├── mvnw                        # Generates build files for MacOS and Linux
-│       ├── mvnw.cmd                    # Generates build files for Windows
-│       ├── pom.xml                     # Manages Maven dependencies and plugins
-│       ├── .mvn/wrapper                # Maven Wrapper files
-│       └── src                         # HTTP Server source code, main Maven package
-│           ├── main/java/adobe_project 
-│           │   ├── HttpResponse.java               # Basic lightweight HTTP response class
-│           │   ├── Main.java                       # Main method here, starts server and devops dependencies
-│           │   ├── MetricsHandler.java             # Serves scraped metrics data to "/metrics"
-│           │   ├── RomanHandler.java               # Handles integer conversion requests, serves JSONs or 400.
-│           │   └── RomanNumeralHTTPServer.java     # Integer conversion logic and server port binding
-│           └── main/resources
-│           │       └── log4j2.xml                  # Logger Config File
-│           └── test/java/adobe_project               # maven testing package
-│               ├── HttpResponseTest.java           # Basic .equals() tests
-│               ├── IntegrationTests.java           # Pings server and tests with expected responses
-│               ├── RomanHandlerTest.java           # Tests if correct HTTP Response is served
-│               └── RomanNumeralHTTPServerTest.java # Tests integer conversion logic
+├─ README.md
+├─ docker-compose.yml   # Automates building/pulling and running images and containers
+├─ http-server          # Java HTTP Server dir
+│   ├─ Dockerfile         # Creates backend image
+│   └─ int-to-roman       # Maven project dir               
+│       ├─ mvnw             # Generates build files for MacOS and Linux
+│       ├─ mvnw.cmd         # Generates build files for Windows
+│       ├─ pom.xml          # Manages Maven dependencies and plugins
+│       ├─ .mvn/wrapper     # Maven Wrapper files
+│       └─ src              # HTTP Server source code
+│           ├─ main/java/adobe_project  # main Maven package
+│           │   ├─ HttpResponse.java            # Basic lightweight HTTP response class
+│           │   ├─ Main.java                    # Main method here, starts server and devops dependencies
+│           │   ├─ MetricsHandler.java          # Serves scraped metrics data to "/metrics"
+│           │   ├─ RomanHandler.java            # Handles integer conversion requests, serves JSONs or 400.
+│           │   └─ RomanNumeralHTTPServer.java  # Integer conversion logic and server port binding
+│           └─ main/resources
+│           │       └─ log4j2.xml               # Logger Config File
+│           └─ test/java/adobe_project  # maven testing package
+│               ├─ HttpResponseTest.java        # Basic .equals() tests
+│               ├─ IntegrationTests.java        # Pings server and tests with expected responses
+│               ├─ RomanHandlerTest.java        # Tests if correct HTTP Response is served
+│               └─ RomanNumeralHTTPServerTest.java # Tests integer conversion logic
 │
-├── react-frontend             # React app dir
-│   ├── Dockerfile                  # Creates frontend image
-│   ├── index.html                  # Skeleton HTML file (required by Vite)
-│   ├── package-lock.json           # Manages all node dependencies
-│   ├── package.json                # Manages and sets up dependencies and builds for production
-│   ├── public                      
-│   │   └── roman-numerals.png             # icon for browser tab
-│   ├── src                         # React app source code
-│   │   ├── App.css                        # Styling for React App
-│   │   ├── App.jsx                        # Renders react app and updates state
-│   │   ├── App.test.js                    # Tests that App state is updated
-│   │   ├── fetchRoman.jsx                 # Fetches JSON data from backend
-│   │   ├── index.css                      # styles html file
-│   │   ├── main.jsx                       # Main function
-│   │   └── ...                            
-│   └── ...                         # Other default config files
-├── prometheus.yml
-├── provisioning            # grafana config files
-│   ├── dashboards                # JSONs and config files for setting up default dashboards
-│   │   └── ...
-│   └── datasources               # config files for connecting to Prometheus
-│       └── ...                   
-└── readme-images
-    └── ...
+├─ react-frontend             # React app dir
+│   ├─ Dockerfile                  # Creates frontend image
+│   ├─ index.html                  # Skeleton HTML file (required by Vite)
+│   ├─ package-lock.json           # Manages all node dependencies
+│   ├─ package.json                # Manages and sets up dependencies and builds for production
+│   ├─ public                      
+│   │   └─ roman-numerals.png             # icon for browser tab
+│   ├─ src                         # React app source code
+│   │   ├─ App.css                        # Styling for React App
+│   │   ├─ App.jsx                        # Renders react app and updates state
+│   │   ├─ App.test.js                    # Tests that App state is updated
+│   │   ├─ fetchRoman.jsx                 # Fetches JSON data from backend
+│   │   ├─ index.css                      # styles html file
+│   │   ├─ main.jsx                       # Main function
+│   │   └─ ...                            
+│   └─ ...                         # Other default config files
+├─ prometheus.yml
+├─ provisioning            # grafana config files
+│   ├─ dashboards                # JSONs and config files for setting up default dashboards
+│   │   └─ ...
+│   └─ datasources               # config files for connecting to Prometheus
+│       └─ ...                   
+└─ readme-images
+    └─ ...
 ```
 
 ## Engineering and Testing Methodology
