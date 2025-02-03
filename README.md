@@ -16,10 +16,17 @@
         <li><a href="#building-and-running-locally">Running Locally</a></li>
       </ul>
     </li>
-    <li><a href="#packaging-layout">Packaging Layout</a></li>
     <li>
-      <a href="#engineering-and-testing-methodology">Engineering and Testing Methodology</a>
+      <a href="#packaging-layout">Packaging Layout</a>
       <ul>
+        <li><a href="#code-organization">Code Organization</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#engineering-and-testing-methodologies">Engineering and Testing Methodologies</a>
+      <ul>
+        <li><a href="#java-http-server">HTTP Server</a></li>
+        <li><a href="#react-frontend-app">React App</a></li>
         <li><a href="#possible-extensions">Possible Extensions</a></li>
       </ul>
     </li>
@@ -65,9 +72,9 @@ docker exec -it int-to-roman-backend sh -c "{your command here}"
 ```
 where the shell command could be something like `cat application-{yyyymmddd}.log`. 
 
-For metrics and monitoring, the server is using Prometheus to scrape metrics data and Grafana to monitor and visualize that data. If users wish, they can query Prometheus directly at [`http://localhost:9090`](). 
+For metrics and monitoring, the server is using Prometheus to periodically scrape metrics data and Grafana to monitor and visualize that data. If users wish, they can query Prometheus directly at [`http://localhost:9090`](). 
 
-Users should visit Grafana at [`http://localhost:3001/dashboards`]() to see the default dashboards the have been set up for the server – a statistic panel and a graph and table panel combination. These two dashboards monitor server health (i.e., cannot visualize data if the server is down) and keep track of the total HTTP requests sent to the server. This number resets if the Docker containers are stopped. 
+Users should visit Grafana at [`http://localhost:3001/dashboards`]() to see the default dashboards the have been set up for the server – a statistic panel and a graph and table panel combination. These two dashboards periodically monitor server health (i.e., cannot visualize data if the server is down) and keep track of the total HTTP requests sent to the server. This number resets if the Docker containers are stopped. 
 
 See example of default dashboard here when server was stopped, then down, then restarted:
 
@@ -158,7 +165,7 @@ The source code for this project is organized thusly:
 │           │   ├─ Main.java                    # Main method here, starts server
 │           │   ├─ MetricsHandler.java          # Serves scraped metrics data to "/metrics"
 │           │   ├─ RomanHandler.java            # Handles integer conversion requests, 
-│           │   │                                serves JSONs or 400.
+│           │   │                                serves JSONs or 400 to "/romannumeral".
 │           │   └─ RomanNumeralHTTPServer.java  # Int conversion logic, server port binding
 │           └─ main/resources
 │           │       └─ log4j2.xml               # Logger Config File
@@ -174,36 +181,69 @@ The source code for this project is organized thusly:
 │   ├─ package-lock.json     # Manages all node dependencies
 │   ├─ package.json          # Manages and sets up dependencies and builds for production
 │   ├─ public                      
-│   │   └─ roman-numerals.png       # icon for browser tab
+│   │   └─ roman-numerals.png       # Icon for browser tab
 │   ├─ src                   # React app source code
 │   │   ├─ App.css                  # Styling for React App
 │   │   ├─ App.jsx                  # Renders react app and updates state
 │   │   ├─ App.test.js              # Tests that App state is updated
 │   │   ├─ fetchRoman.jsx           # Fetches JSON data from backend
-│   │   ├─ index.css                # styles index.html file
+│   │   ├─ index.css                # Styles index.html file
 │   │   ├─ main.jsx                 # Main function
 │   │   └─ ...                            
 │   └─ ...                         # Other default config files
 ├─ prometheus.yml
-├─ provisioning            # grafana config files
+├─ provisioning            # Grafana config files
 │   ├─ dashboards                # JSONs and config files for setting up default dashboards
 │   │   └─ ...
-│   └─ datasources               # config files for connecting to Prometheus
+│   └─ datasources               # Config files for connecting to Prometheus
 │       └─ ...                   
 └─ readme-images
     └─ ...
 ```
 
-## Engineering and Testing Methodology
+## Engineering and Testing Methodologies
 
-- http-server: How the server works, what purpose each file/class/method serves, why and how I tested what I did (unit + integration), how logging and metrics collection works and why it's useful
-- react-frontend: Page elements (button, etc.), how I fetch from server and update state, tests, why adobe spectrum react
-- docker containerization, prometheus queries, grafana monitoring
+### Java HTTP Server
+
+This Java HTTP Server operates by first setting up a localhost endpoint at port 8080, then listening for requests and responding with JSON data. I used the built-in `com.sun.net.httpserver` Java library to facilitate this, as it is lightweight, easy-to-use, and covers the needs of a simple, locally-hosted server more than adequately. It writes to sockets using the Java `OutputStream` object. 
+
+The `Main` class starts the server and injects DevOps dependencies into the HTTP handlers through `RomanNumeralHTTPServer` static methods. I decided to split up the code this way to be able to mock these dependencies during testing, but also because it let me split up each HTTP handler into its own class, which allows the server to remain fairly modular – adding or removing a page URL and its respective handler does not affect other handlers. It also allows the logs to direct a user to debug where an IO error occurred, since they propagate upward from where they happen. 
+
+The server has two handler classes at the moment, `MetricsHandler` for Prometheus scraping and `RomanHandler` for writing 400 responses and JSON objects with integers and Roman numerals. I wrote my own small `HttpResponse` class since I didn't need more data than response body, code, and content type, and it made testing for correctness a lot easier when overriding the `equals()` and `hashCode()` methods since I could directly compare objects by value. 
+
+I used JUnit 5 to write the unit and integration tests for the HTTP server in. I organized the unit tests by class, and ensured that their logic was executed as expected using `assert()` statements. For the integration tests, I used Mockito to inject mock DevOps objects (logger, registry, etc.) into a server running on a separate port, then pinged that server and tested the HTTP responses and JSON objects against what was expected. I also manually tested the server with `curl` to see if the correct response was sent.
+
+I used log4j2 and Prometheus for logging and metrics collection, respectively, because they both integrate easily with Maven/Java and React/JavaScript. The logger writes to a `.log` file with info, error, and fatal messages in order to facilitate debugging and server upkeep in the Docker container. I used a counter and a registry from the Prometheus API to keep track of the number of HTTP requests coming into the server. This information could be used for scalability or throughput calculation purposes, if the server was deployed to the cloud.
+
+### React Frontend App
+
+I designed the React app using the Adobe React Spectrum component library for a few reasons:
+- Theming allowed for very easy implementation of light and dark mode switch
+- Built-in `<Flex>` component allowed for easy bootstrapping
+- The `<TextField>` component made updating user input state for fetch requests simple
+- It was recommended to me in the specification
+
+The app consists of a just a few major elements: a text input field, a button, a light and dark mode switch, and a text element that updates with a Roman numeral when the user clicks the button after inputting an integer. The `fetch()` works by having an event listener tied to the button's `onPress` event, which then formats a URL with the user's input and pings the HTTP server backend. The resulting JSON object (or error message, if the user inputted their number incorrectly) is then parsed and its data displayed on the page.
+
+I tested updating the app's state using the Jest framework in `App.test.js`, because it allowed me to mock fetch requests and check the update state logic without actually requesting data from the backend. Jest also allows asynchronous checks on the app's state when combined with the React testing library's `userState` and `render` imports. Overall, I used it because it makes implementing frontend components a lot more reliable. 
+
+### Containerization and DevOps
+
+I encapsulated, containerized, and orchestrated my entire project using Docker, for three main reasons:
+
+  1. <b> Ease of Use. </b> It allows users to either build or pull images, then run them inside containers and get the server working with a single command.
+  2. <b> Cross-Platform. </b> Docker containers can be built for every major OS on every major architecture, so the user's platform is negligible unless they are using something rare and unsupported.
+  3. <b> Modular Orchestration. </b> Docker containers only contain exactly what they need for runtime, and use minimal resources to communicate to each other if they need to. For my project, it was extremely simple to use Docker and have my React app and my DevOps capabilities connect to my Java backend.
+
+Grafana and Prometheus work together in order to collect and visualize metrics. I added them because, if this server were to be deployed to the cloud, it would be important to keep track of server health and calculate server performance costs and scalability based on user activity. They are also extremely easy to integrate with Docker, since they both have official images that can be containerized and connect to my frontend and backend with just a few lines in my `.yml` file. Also, Grafana allows for custom dashboards to be saved and reused, which allows users to access default dashboards of my choosing instead of having to set them up themselves.
 
 ### Possible Extensions
 
+What are some potential next steps for this project? 
 
-
+  1. The server could be deployed to the cloud and updated and maintained using CI/CD. I've already uploaded some Docker images using GitHub Packages, so using GitHub Actions and Jenkins to deploy them would be relatively simple if there was a server to host them on. 
+  2. Since I kept the handlers modular, and used dependency injection to separate the server logic and DevOps capabilities, adding more functionalities to both would be relatively simple. Implementing a Roman numeral to integer converter would be quick, and then a service keeping track of the ratio between requests to both handlers using additional Prometheus objects and Grafana dashboards could be added. This would not affect any of the current server functionalities either.
+  3. I could implement a custom UI to handle integers above 3999. According to the [Roman numeral specification](https://en.wikipedia.org/wiki/Roman_numerals), digits in the thousands and hundreds of thousands were notated by using lines above and boxes around those digits, respectively. This would allow users to enter a far greater range of positive integers, and would pose an interesting logic and design challenge. 
 
 ## Built With
 
